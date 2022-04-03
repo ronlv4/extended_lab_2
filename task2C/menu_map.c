@@ -3,10 +3,10 @@
 #include <string.h>
  
 char censor(char c) {
-  if(c == '!')
-    return '*';
-  else
-    return c;
+      	if(c == '!')
+	    	return '*';
+      	else
+	    	return c;
 }
  
 char* map(char *array, int array_length, char (*f) (char)){
@@ -14,7 +14,7 @@ char* map(char *array, int array_length, char (*f) (char)){
   int i;
   for (i = 0; i < array_length; i++)
   {
-	  mapped_array[i] = (*f)(array[i]);
+	  mapped_array[i] = f(array[i]);
   }
   return mapped_array;
 }
@@ -24,7 +24,9 @@ char encrypt(char c)
 * If c is not between 0x41 and 0x7a it is returned unchanged */
 {
 	if (c >= 0x41 && c<= 0x7a)
+	{
 		return c + 2;
+	}
 	return c;
 }
 
@@ -32,7 +34,6 @@ char decrypt(char c)
 /* Gets a char c and returns its decrypted form by reducing 2 to its value. 
  * If c is not between 0x41 and 0x7a it is returned unchanged */
 {
-	printf("decrypt: %x\n", c);
 	if (c >= 0x41 && c<= 0x7a)
 		return c - 2;
 	return c;
@@ -43,13 +44,14 @@ char dprt(char c)
  * new line, and returns c unchanged. */
 {
 	printf("%d\n", c);
+	return c;
 }
 
 char cprt(char c)
 /* If c is a number between 0x41 and 0x7a, cprt prints the character of ASCII value c followed by a new line. Otherwise, cprt prints the dot ('*') character. After printing, cprt returns the value of c unchanged. */
 {
 	if (c >= 0x41 && c<= 0x7a)
-		printf("%d\n", c);
+		printf("%c\n", c);
 	else
 		printf("*\n");
 	return c;

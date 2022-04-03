@@ -1,29 +1,37 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
- 
-char censor(char c) {
-  if(c == '!')
-    return '*';
-  else
-    return c;
+
+struct fun_desc
+{
+	char *name;
+	char (*fun)(char);
+};
+
+char censor(char c)
+{
+	if (c == '!')
+		return '*';
+	else
+		return c;
 }
- 
-char* map(char *array, int array_length, char (*f) (char)){
-  char* mapped_array = (char*)(malloc(array_length*sizeof(char)));
-  int i;
-  for (i = 0; i < array_length; i++)
-  {
-	  mapped_array[i] = (*f)(array[i]);
-  }
-  return mapped_array;
+
+char *map(char *array, int array_length, char (*f)(char))
+{
+	char *mapped_array = (char *)(malloc(array_length * sizeof(char)));
+	int i;
+	for (i = 0; i < array_length; i++)
+	{
+		mapped_array[i] = (*f)(array[i]);
+	}
+	return mapped_array;
 }
 
 char encrypt(char c)
 /* Gets a char c and returns its encrypted form by adding 2 to its value.
 * If c is not between 0x41 and 0x7a it is returned unchanged */
 {
-	if (c >= 0x41 && c<= 0x7a)
+	if (c >= 0x41 && c <= 0x7a)
 		return c + 2;
 	return c;
 }
@@ -33,7 +41,7 @@ char decrypt(char c)
  * If c is not between 0x41 and 0x7a it is returned unchanged */
 {
 	printf("decrypt: %x\n", c);
-	if (c >= 0x41 && c<= 0x7a)
+	if (c >= 0x41 && c <= 0x7a)
 		return c - 2;
 	return c;
 }
@@ -43,12 +51,13 @@ char dprt(char c)
  * new line, and returns c unchanged. */
 {
 	printf("%d\n", c);
+	return c;
 }
 
 char cprt(char c)
 /* If c is a number between 0x41 and 0x7a, cprt prints the character of ASCII value c followed by a new line. Otherwise, cprt prints the dot ('*') character. After printing, cprt returns the value of c unchanged. */
 {
-	if (c >= 0x41 && c<= 0x7a)
+	if (c >= 0x41 && c <= 0x7a)
 		printf("%d\n", c);
 	else
 		printf("*\n");
@@ -67,20 +76,20 @@ char quit(char c) /* Gets a char c, and if the char is 'q', ends the program wit
 	return c;
 }
 
-void print_menu(struct & menu)
+void print_menu(struct fun_desc *menu[])
 {
 	int i;
-	for (i = 0; i < sizeof(menu)/sizeof(menu[0]); i++)
+	for (i = 0; i < sizeof(*menu) / sizeof(menu[0]); i++)
 	{
-		printf("%d) %s\n", i, menu[0]);
+		printf("%d) %s\n", i, (*menu)[i].name);
 	}
 	printf("Option: ");
 }
 
-
-void parse_input(int input, struct fun_desc* menu[])
+void parse_input(int input, struct fun_desc *menu[])
 {
-	if (input >= 0 && input <= sizeof(menu)/sizeof(menu[0])) {
+	if (input >= 0 && input <= sizeof(*menu) / sizeof(menu[0]))
+	{
 		printf("Within bounds");
 	}
 	else
@@ -88,43 +97,43 @@ void parse_input(int input, struct fun_desc* menu[])
 		printf("Not within bounds");
 		exit(1);
 	}
-	
-
-	
 }
 
-		
- 
-int main(int argc, char **argv){
-
+int main(int argc, char **argv)
+{
 	int base_len = 5;
-	char* carray[base_len] = "";
+	printf("before memset");
+	char* carray[base_len];
+	memset(carray, 0, base_len*base_len*sizeof(char*));
 	int input;
-	struct fun_desc menu[] = { { "Cencor", cencor }, { "Encrypt", encrypt }, { "Decrypt", decrypt }, {"Print dec", dprt}, {"Print string", cprt}, {"Get String", my_get}, {"Quit", quit}, { NULL, NULL }};
+	struct fun_desc *menu[] = {
+		{"Cencor", censor},
+		{"Encrypt", encrypt},
+		{"Decrypt", decrypt},
+		{"Print dec", dprt},
+		{"Print string", cprt},
+		{"Get String", my_get},
+		{"Quit", quit},
+		{NULL, NULL}
+		};
+	
 	do
 	{
-		print_menu();
+		print_menu(menu);
 		input = fgetc(stdin);
-		parse_input(input, &menu);
-		carray = map(carray, base_len, menu[input][1])
-	} while (true);
-	
-
-
-
+		parse_input(input, menu);
+/*		carray = map(carray, base_len, (*menu)[input].fun);*/
+	} while (1);
 
 	char arr1[base_len];
-	char* arr2 = map(arr1, base_len, my_get);
-	char* arr3 = map(arr2, base_len, encrypt);
-	char* arr4 = map(arr3, base_len, dprt);
-	char* arr5 = map(arr4, base_len, decrypt);
-	char* arr6 = map(arr5, base_len, cprt);
+	char *arr2 = map(arr1, base_len, my_get);
+	char *arr3 = map(arr2, base_len, encrypt);
+	char *arr4 = map(arr3, base_len, dprt);
+	char *arr5 = map(arr4, base_len, decrypt);
+	char *arr6 = map(arr5, base_len, cprt);
 	free(arr2);
 	free(arr3);
 	free(arr4);
 	free(arr5);
 	free(arr6);
 }
-
-
-
